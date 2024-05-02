@@ -1,7 +1,8 @@
 package kg.beganov.AuthProject.configuration;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,6 @@ public class JWTUtil {
 
     @Value("${jwt.secret}")
     String SECRET_KEY;
-    final int TOKEN_DURATION_MILLISECONDS = 10 * 1000 * 60 * 60 * 10 * 5; // temporarily 100 * 5 hours
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -33,7 +34,7 @@ public class JWTUtil {
         return claimsResolver.apply(claims);
     }
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
     }
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
@@ -43,9 +44,11 @@ public class JWTUtil {
         return createToken(claims, username);
     }
     private String createToken(Map<String, Object> claims, String username) {
-        return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_DURATION_MILLISECONDS))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+        // temporarily 100 * 5 hours
+        int TOKEN_DURATION_MILLISECONDS = 10 * 1000 * 60 * 60 * 10 * 5;
+        return Jwts.builder().claims(claims).subject(username).issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + TOKEN_DURATION_MILLISECONDS))
+                .signWith(getSignInKey(), Jwts.SIG.HS256).compact();
     }
     public Boolean validateToken(String token, UserDetails userDetails) {
         if (userDetails == null) {
@@ -53,5 +56,9 @@ public class JWTUtil {
         }
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+    private SecretKey getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }

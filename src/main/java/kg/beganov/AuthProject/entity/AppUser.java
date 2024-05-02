@@ -2,11 +2,9 @@ package kg.beganov.AuthProject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.List;
 
@@ -14,25 +12,29 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppUser implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
-    String username;
+    private String username;
 
     @Column(nullable = false, unique = true)
-    String email;
+    private String email;
 
     @Column(nullable = false)
-    String password;
+    private String password;
 
-    @Enumerated(EnumType.STRING)
-    Role role;
+    @Column @Enumerated(EnumType.STRING)
+    private Role role;
 
-    boolean isEmailVerified;
+    @Column
+    private boolean isEmailVerified;
+
+    public AppUser(){
+        super();
+        isEmailVerified = false;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
