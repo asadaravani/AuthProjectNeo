@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: AuthProject
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+jwt:
+  secret: secret_key_secret
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: beganov.asadi@gmail.com
+  password: ffsf hyzl lkjn xuwl
+
+  properties:
+    mail:
+      smtp:
+        ssl:
+          trust: "*"
+        auth: true
+        starttls:
+          enable: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
