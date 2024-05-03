@@ -34,8 +34,7 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final UserValidator userValidator;
-    @Value("${confirmation.domain-name}")
-    private final String dropletApiDomain = "localhost";
+    private final String dropletApiDomain = "165.22.72.60";
 
     @Override
     public AuthResponse authenticate(AuthRequest authRequest) throws UserNotFoundException, UserNotVerifiedException, InvalidDataProvidedException {
