@@ -15,7 +15,9 @@ spring:
     open-in-view: false
 
 jwt:
-  secret: secret_key_secret
+  secret: 3167ceee9cb36d05a553fd48752e077e8e2c7edef0c046f7bc7a38678f7bd8da
+confirmation:
+  domain-name: "165.22.72.60"
 mail:
   host: smtp.gmail.com
   port: 587

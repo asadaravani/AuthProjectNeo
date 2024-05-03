@@ -14,7 +14,9 @@ import kg.beganov.AuthProject.entity.Role;
 import kg.beganov.AuthProject.repository.AppUserRepository;
 import kg.beganov.AuthProject.service.AppUserAuthenticationService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,24 +34,38 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
     private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
     private final UserValidator userValidator;
+    @Value("${confirmation.domain-name}")
+    private final String dropletApiDomain = "localhost";
 
     @Override
-    public AuthResponse authenticate(AuthRequest authRequest) throws UserNotFoundException, UserNotVerifiedException {
-        AppUser user = appUserRepository.findUserByEmail(authRequest.getEmail())
+    public AuthResponse authenticate(AuthRequest authRequest) throws UserNotFoundException, UserNotVerifiedException, InvalidDataProvidedException {
+        String emailToLowercase = authRequest.getEmail().toLowerCase();
+        AppUser user = appUserRepository.findUserByEmail(emailToLowercase)
                 .orElseThrow(UserNotFoundException::new);
         if(!user.isEmailVerified()){
-            throw new UserNotVerifiedException();
+            ConfirmationToken confirmationToken = new ConfirmationToken();
+            String link = generateLink(confirmationToken, user);
+            emailSender.send(
+                    user.getEmail(),
+                    emailSender.buildEmail(user.getUsername(), link));
+
+            throw new UserNotVerifiedException("You are not verified! You will get a new verification email");
         }
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getEmail(),
-                        authRequest.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            emailToLowercase,
+                            authRequest.getPassword()
+                    )
+            );
+        }catch (BadCredentialsException e){
+            throw new InvalidDataProvidedException("Invalid email or password");
+        }
         String userEmail = user.getEmail();
         var jwtToken = jwtUtil.generateToken(userEmail);
         return AuthResponse.builder().token(jwtToken).build();
     }
+
     @Override
     public String register(RegisterRequest registerRequest){
         try {
@@ -66,14 +82,7 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
         appUserRepository.save(appUser);
 
         ConfirmationToken confirmationToken = new ConfirmationToken();
-        String token = UUID.randomUUID().toString();
-        confirmationToken.setToken(token);
-        confirmationToken.setAppUser(appUser);
-        confirmationToken.setCreatedAt(LocalDateTime.now());
-        confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(5L));
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        String link = "http://localhost:8080/api/user/confirmToken?token=" + token;
+        String link = generateLink(confirmationToken, appUser);
         emailSender.send(
                 confirmedEmail,
                 emailSender.buildEmail(registerRequest.getUsername(), link));
@@ -103,6 +112,14 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
                 confirmationToken.getAppUser().getEmail());
         return "Confirmed";
     }
-
+    private String generateLink(ConfirmationToken confirmationToken, AppUser appUser) {
+        String token = UUID.randomUUID().toString();
+        confirmationToken.setToken(token);
+        confirmationToken.setAppUser(appUser);
+        confirmationToken.setCreatedAt(LocalDateTime.now());
+        confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(5L));
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+        return "http://" +dropletApiDomain+":8080/api/user/confirmToken?token=" + token;
+    }
 
 }

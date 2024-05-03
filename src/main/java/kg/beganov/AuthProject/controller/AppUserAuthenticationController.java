@@ -22,7 +22,7 @@ public class AppUserAuthenticationController {
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest){
         try {
             return ResponseEntity.ok().body(appUserAuthenticationService.authenticate(authRequest));
-        }catch (UserNotFoundException | UserNotVerifiedException e){
+        }catch (UserNotFoundException | UserNotVerifiedException | InvalidDataProvidedException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
