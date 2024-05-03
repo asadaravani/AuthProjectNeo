@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/user")
 @AllArgsConstructor
-@CrossOrigin("*")
 public class AppUserAuthenticationController {
     private final AppUserAuthenticationService appUserAuthenticationService;
 
