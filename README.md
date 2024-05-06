@@ -26,12 +26,13 @@ This project has been instrumental in honing my Java programming skills, particu
    ```bash
    git clone https://github.com/asadaravani/Neobis_Auth_Project.git
    ```
-3. Prepare configurations(`application.yml`) for your machine. Also, check `dropletApi` field in the `AppUserAuthenticationServiceImpl.class`
-4. __cd__ to the __root__ directory of the repo in your droplet and create __jar__:
+3. Prepare configurations(`application.yml`) for your machine.
+4. Also, check `dropletApi` field in the `AppUserAuthenticationServiceImpl.class` to manage the confirmation link that will be sent to users.
+5. __cd__ to the __root__ directory of the repo in your droplet and create __jar__:
    ```bash
    mvn clean package
    ``` 
-5. __cd__ to the __target__ directory and execute the *jar*:
+6. __cd__ to the __target__ directory and execute the *jar*:
    ```bash
    java -jar AuthProject-0.0.1-SNAPSHOT.jar
    ```
