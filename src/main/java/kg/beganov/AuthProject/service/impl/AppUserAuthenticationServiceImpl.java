@@ -35,7 +35,7 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
     EmailSenderService emailSenderService;
     ConfirmationTokenService confirmationTokenService;
     UserValidator userValidator;
-    String dropletApi = "localhost";
+    String dropletApi = "165.22.72.60";
 
     @Override
     public AuthResponse authenticate(AuthRequest authRequest) throws UserNotFoundException, UserNotVerifiedException, InvalidDataProvidedException {
