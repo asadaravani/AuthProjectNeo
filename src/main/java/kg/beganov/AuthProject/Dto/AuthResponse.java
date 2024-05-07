@@ -1,4 +1,4 @@
-package kg.beganov.AuthProject.DTO;
+package kg.beganov.AuthProject.Dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

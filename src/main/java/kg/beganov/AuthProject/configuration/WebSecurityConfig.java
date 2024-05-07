@@ -1,6 +1,8 @@
 package kg.beganov.AuthProject.configuration;
 
 import kg.beganov.AuthProject.repository.AppUserRepository;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,9 +22,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WebSecurityConfig {
-    private final JWTAuthFilter jwtAuthFilter;
-    private final AppUserRepository userRepo;
+    JWTAuthFilter jwtAuthFilter;
+    AppUserRepository userRepo;
 
     public WebSecurityConfig(JWTAuthFilter jwtAuthFilter, AppUserRepository userRepo) {
         this.jwtAuthFilter = jwtAuthFilter;

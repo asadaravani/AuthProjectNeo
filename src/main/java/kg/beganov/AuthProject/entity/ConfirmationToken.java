@@ -1,9 +1,11 @@
 package kg.beganov.AuthProject.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ConfirmationToken {
     @SequenceGenerator(
             name = "confirmation_token_sequence",
@@ -22,23 +25,23 @@ public class ConfirmationToken {
             strategy = GenerationType.SEQUENCE,
             generator = "confirmation_token_sequence"
     )
-    private Long id;
+    Long id;
 
     @Column(nullable = false)
-    private String token;
+    String token;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime expiresAt;
+    LocalDateTime expiresAt;
 
     @Column
-    private LocalDateTime confirmedAt;
+    LocalDateTime confirmedAt;
 
     @ManyToOne
     @JoinColumn(
             nullable = false
     )
-    private AppUser appUser;
+    AppUser appUser;
 }

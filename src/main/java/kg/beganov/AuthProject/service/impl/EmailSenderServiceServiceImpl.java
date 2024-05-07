@@ -2,8 +2,10 @@ package kg.beganov.AuthProject.service.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import kg.beganov.AuthProject.service.EmailSender;
+import kg.beganov.AuthProject.service.EmailSenderService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,12 +15,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class EmailSenderService implements EmailSender {
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class EmailSenderServiceServiceImpl implements EmailSenderService {
 
-    private final static Logger LOGGER = LoggerFactory
-            .getLogger(EmailSenderService.class);
+    static Logger LOGGER = LoggerFactory
+            .getLogger(EmailSenderServiceServiceImpl.class);
     
-    private final JavaMailSender mailSender;
+    JavaMailSender mailSender;
 
     @Override
     @Async

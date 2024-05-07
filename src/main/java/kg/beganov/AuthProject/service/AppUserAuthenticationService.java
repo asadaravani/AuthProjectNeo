@@ -1,8 +1,8 @@
 package kg.beganov.AuthProject.service;
 
-import kg.beganov.AuthProject.DTO.AuthRequest;
-import kg.beganov.AuthProject.DTO.AuthResponse;
-import kg.beganov.AuthProject.DTO.RegisterRequest;
+import kg.beganov.AuthProject.Dto.AuthRequest;
+import kg.beganov.AuthProject.Dto.AuthResponse;
+import kg.beganov.AuthProject.Dto.RegisterRequest;
 
 public interface AppUserAuthenticationService{
 
