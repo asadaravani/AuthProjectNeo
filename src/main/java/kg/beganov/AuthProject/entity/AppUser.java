@@ -2,6 +2,7 @@ package kg.beganov.AuthProject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,24 +13,25 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppUser implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    String username;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    String email;
 
     @Column(nullable = false)
-    private String password;
+    String password;
 
     @Column @Enumerated(EnumType.STRING)
-    private Role role;
+    Role role;
 
     @Column
-    private boolean isEmailVerified;
+    boolean isEmailVerified;
 
     public AppUser(){
         super();

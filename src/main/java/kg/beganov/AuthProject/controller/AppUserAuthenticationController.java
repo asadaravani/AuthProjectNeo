@@ -1,7 +1,7 @@
 package kg.beganov.AuthProject.controller;
 
-import kg.beganov.AuthProject.DTO.AuthRequest;
-import kg.beganov.AuthProject.DTO.RegisterRequest;
+import kg.beganov.AuthProject.Dto.AuthRequest;
+import kg.beganov.AuthProject.Dto.RegisterRequest;
 import kg.beganov.AuthProject.ecxeption.ConfirmationTokenExpiredException;
 import kg.beganov.AuthProject.ecxeption.InvalidDataProvidedException;
 import kg.beganov.AuthProject.ecxeption.UserNotFoundException;

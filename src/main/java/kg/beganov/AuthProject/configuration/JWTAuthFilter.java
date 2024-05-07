@@ -2,7 +2,9 @@ package kg.beganov.AuthProject.configuration;
 
 import kg.beganov.AuthProject.entity.AppUser;
 import kg.beganov.AuthProject.repository.AppUserRepository;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,9 +16,10 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class JWTAuthFilter extends OncePerRequestFilter {
-    private final AppUserRepository userRepo;
-    private final JWTUtil jwtUtil;
+    AppUserRepository userRepo;
+    JWTUtil jwtUtil;
 
 
     @Override

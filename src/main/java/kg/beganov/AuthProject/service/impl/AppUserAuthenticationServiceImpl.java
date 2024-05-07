@@ -1,40 +1,41 @@
 package kg.beganov.AuthProject.service.impl;
 
-import kg.beganov.AuthProject.DTO.AuthRequest;
-import kg.beganov.AuthProject.DTO.AuthResponse;
-import kg.beganov.AuthProject.DTO.RegisterRequest;
+import kg.beganov.AuthProject.Dto.AuthRequest;
+import kg.beganov.AuthProject.Dto.AuthResponse;
+import kg.beganov.AuthProject.Dto.RegisterRequest;
 import kg.beganov.AuthProject.configuration.JWTUtil;
 import kg.beganov.AuthProject.ecxeption.*;
 import kg.beganov.AuthProject.entity.ConfirmationToken;
 import kg.beganov.AuthProject.service.ConfirmationTokenService;
 import kg.beganov.AuthProject.service.UserValidator;
-import kg.beganov.AuthProject.service.EmailSender;
+import kg.beganov.AuthProject.service.EmailSenderService;
 import kg.beganov.AuthProject.entity.AppUser;
 import kg.beganov.AuthProject.entity.Role;
 import kg.beganov.AuthProject.repository.AppUserRepository;
 import kg.beganov.AuthProject.service.AppUserAuthenticationService;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationService {
-    private final AppUserRepository appUserRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JWTUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
-    private final EmailSender emailSender;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final UserValidator userValidator;
-    private final String dropletApiDomain = "165.22.72.60";
+    AppUserRepository appUserRepository;
+    PasswordEncoder passwordEncoder;
+    JWTUtil jwtUtil;
+    AuthenticationManager authenticationManager;
+    EmailSenderService emailSenderService;
+    ConfirmationTokenService confirmationTokenService;
+    UserValidator userValidator;
+    String dropletApi = "localhost";
 
     @Override
     public AuthResponse authenticate(AuthRequest authRequest) throws UserNotFoundException, UserNotVerifiedException, InvalidDataProvidedException {
@@ -44,9 +45,9 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
         if(!user.isEmailVerified()){
             ConfirmationToken confirmationToken = new ConfirmationToken();
             String link = generateLink(confirmationToken, user);
-            emailSender.send(
+            emailSenderService.send(
                     user.getEmail(),
-                    emailSender.buildEmail(user.getUsername(), link));
+                    emailSenderService.buildEmail(user.getUsername(), link));
 
             throw new UserNotVerifiedException("You are not verified! You will get a new verification email");
         }
@@ -62,11 +63,13 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
         }
         String userEmail = user.getEmail();
         var jwtToken = jwtUtil.generateToken(userEmail);
+
         return AuthResponse.builder().token(jwtToken).build();
     }
 
     @Override
     public String register(RegisterRequest registerRequest){
+
         try {
             userValidator.isUserValid(registerRequest);
         }catch (InvalidDataProvidedException | UserAlreadyExistException e){
@@ -82,9 +85,9 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
 
         ConfirmationToken confirmationToken = new ConfirmationToken();
         String link = generateLink(confirmationToken, appUser);
-        emailSender.send(
+        emailSenderService.send(
                 confirmedEmail,
-                emailSender.buildEmail(registerRequest.getUsername(), link));
+                emailSenderService.buildEmail(registerRequest.getUsername(), link));
 
         return "We have sent you a link to verify your email, please check your email";
     }
@@ -118,7 +121,8 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
         confirmationToken.setCreatedAt(LocalDateTime.now());
         confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(5L));
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        return "http://" +dropletApiDomain+":8080/api/user/confirmToken?token=" + token;
+        return "http://" +dropletApi+":8080/api/user/confirmToken?token=" + token;
+
     }
 
 }

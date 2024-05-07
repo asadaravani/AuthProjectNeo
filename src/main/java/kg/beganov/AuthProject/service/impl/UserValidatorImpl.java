@@ -1,6 +1,6 @@
 package kg.beganov.AuthProject.service.impl;
 
-import kg.beganov.AuthProject.DTO.RegisterRequest;
+import kg.beganov.AuthProject.Dto.RegisterRequest;
 import kg.beganov.AuthProject.ecxeption.InvalidDataProvidedException;
 import kg.beganov.AuthProject.ecxeption.UserAlreadyExistException;
 import kg.beganov.AuthProject.repository.AppUserRepository;
@@ -19,7 +19,7 @@ public class UserValidatorImpl implements UserValidator {
     public void isUserValid(RegisterRequest registerRequest) throws
             InvalidDataProvidedException, UserAlreadyExistException {
         if(isEmailTaken(registerRequest.getEmail())){
-            throw new UserAlreadyExistException("Email is already taken");
+            throw new UserAlreadyExistException("Email is already registered. Just log in dude");
         }
         if(isUsernameTaken(registerRequest.getUsername())){
             throw new UserAlreadyExistException("Username is already taken");
