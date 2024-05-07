@@ -35,6 +35,7 @@ public class AppUserAuthenticationServiceImpl implements AppUserAuthenticationSe
     EmailSenderService emailSenderService;
     ConfirmationTokenService confirmationTokenService;
     UserValidator userValidator;
+
     String dropletApi = "165.22.72.60";
 
     @Override
