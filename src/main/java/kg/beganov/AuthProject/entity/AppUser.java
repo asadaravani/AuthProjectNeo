@@ -33,6 +33,9 @@ public class AppUser implements UserDetails {
     @Column
     boolean isEmailVerified;
 
+    @OneToMany(mappedBy = "appUser")
+    List<ConfirmationToken> confirmationToken;
+
     public AppUser(){
         super();
         isEmailVerified = false;

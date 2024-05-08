@@ -40,8 +40,6 @@ public class ConfirmationToken {
     LocalDateTime confirmedAt;
 
     @ManyToOne
-    @JoinColumn(
-            nullable = false
-    )
+    @JoinColumn(nullable = false)
     AppUser appUser;
 }
