@@ -1,7 +1,7 @@
 package kg.beganov.AuthProject.ecxeption;
 
-public class UserNotFoundException extends RuntimeException{
-    public UserNotFoundException() {
-        super("User not found");
+public class UserNotFoundException extends BaseException {
+    public UserNotFoundException(String message) {
+        super(message);
     }
 }

@@ -21,7 +21,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     AppUserRepository userRepo;
     JWTUtil jwtUtil;
 
-
     @Override
     protected void doFilterInternal(@NonNull jakarta.servlet.http.HttpServletRequest request,
                                     @NonNull jakarta.servlet.http.HttpServletResponse response,
